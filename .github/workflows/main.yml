@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  fail_test:
+    runs-on: ubuntu-latest
+    name: Check libraries and publish comment if issues are  found
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Snapcraft
+        run: |
+          sudo apt update
+          sudo apt install snapd -y
+          sudo snap install charmcraft --classic
+      - name: Check libraries
+        uses: simskij/charm-lib-checker-action@HEAD
+        with:
+          github_secret: ${{ secrets.GITHUB_TOKEN }}
