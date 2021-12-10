@@ -2,6 +2,11 @@ name: Charm Lib Checker
 description: >
   Detect and notify on drifts in charm libraries.
   This action only works with pull requests.
+
+on:
+  pull_request_target
+
+
 inputs:
   github_secret:
     required: true
@@ -15,10 +20,16 @@ runs:
       run: |
         out=$(charmcraft fetch-lib 2>&1 | grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)")
         body=" ⚠️  The libraries used in this PR are not in sync with their remote counterparts:\n\\n`\`\`$OUT\`\`\`"
-        curl \
-          -X POST \
-          -H 'authorization: Bearer ${{ inputs.github_secret }}' \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/simskij/charm-lib-checkeer-action/issues/1/comments \
-          -d "{\"body\":\"$body\"}"
+        echo "::set-env name=body::$body"
       shell: bash
+    - name: PR Comment
+      uses: actions/github-script@v2
+      with:
+        github-token: ${{ inputs.github_token }}
+        script: |
+          github.issues.createComment({
+            issue_number: ${{ github.event.number }},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '${{env.body}}'
+          })
