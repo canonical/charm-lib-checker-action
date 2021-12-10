@@ -15,7 +15,7 @@ runs:
     - name: Detect drift
       run: |
         out=$(charmcraft fetch-lib 2>&1 | grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)")
-        body="The libraries used in this Pull Request are not in sync with their remote counterparts:\n\n`\`\`$out`\`\`"
+        body="The libraries used in this pull request are not in sync with their remote counterparts:\n\n\`\`\`$out\`\`\`"
         echo "body=$body" >> $GITHUB_ENV
       shell: bash
     - name: PR Comment
