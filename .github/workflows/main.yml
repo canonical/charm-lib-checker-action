@@ -13,6 +13,6 @@ jobs:
           sudo apt install snapd -y
           sudo snap install charmcraft --classic
       - name: Check libraries
-        uses: simskij/charm-lib-checker-action@HEAD
+        uses: canonical/charm-lib-checker-action@HEAD
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
