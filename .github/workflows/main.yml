@@ -6,7 +6,7 @@ jobs:
     name: Check charm libraries
     steps:
       - uses: actions/checkout@v2
-      - name: Install Snapcraft
+      - name: Install dependencies
         run: |
           # Some prep
           sudo apt update
