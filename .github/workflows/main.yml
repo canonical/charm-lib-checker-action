@@ -1,0 +1,21 @@
+on: [pull_request_target, workflow_dispatch]
+
+jobs:
+  fail_test:
+    runs-on: ubuntu-latest
+    name: Check charm libraries
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install snapd -y
+          sudo snap install charmcraft --classic
+      - name: Clone charm
+        run: |
+          git clone https://github.com/canonical/observability-libs
+      - name: Check libraries
+        uses: "./"
+        with:
+          charm_path: ./observability-libs
+          github_token: ${{ secrets.GITHUB_TOKEN }}
