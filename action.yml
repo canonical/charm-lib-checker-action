@@ -4,6 +4,10 @@ description: >
   This action only works with pull requests.
 
 inputs:
+  charm_path:
+    default: "."
+    description: >
+      Path to the charm to fetch libs for, if different.
   github_token:
     required: true
     description: >
@@ -14,6 +18,7 @@ runs:
   steps:
     - name: Detect drift
       run: |
+        cd ${{ inputs.charm_path }}
         out=$(charmcraft fetch-lib 2>&1 | grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)")
         body="The libraries used in this pull request are not in sync with their remote counterparts:\n\n\`\`\`$out\`\`\`"
         echo "body=$body" >> $GITHUB_ENV

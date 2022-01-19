@@ -15,7 +15,7 @@ jobs:
         run: |
           git clone git@github.com/canonical/observability-libs
       - name: Check libraries
-        working-directory: ./observability-libs
-        uses: simskij/charm-lib-checker-action@HEAD
+        uses: ./.github/actions/charm-lib-checker-action
         with:
+          charm_path: ./observability-libs
           github_token: ${{ secrets.GITHUB_TOKEN }}
