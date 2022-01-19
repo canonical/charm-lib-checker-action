@@ -21,9 +21,23 @@ runs:
         sudo snap install yq
       shell: bash
     - name: Detect drift
+      id: detect
       run: |
         cd ${{ inputs.charm_path }}
-        export TEXT="Libraries are not up to date with their remote counterparts. If this was not intentional, run \`charmcraft fetch-libs\` and commit the updated libs to your PR branch."
         export CHARM_NAME=$(yq eval '.name' metadata.yaml | sed 's/-/_/')
-        charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)' && echo "::warning file=metadata.yaml,line=1,col=1::$TEXT"
+        charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)' && echo "::set-output name=WARN::true" || echo "No drifts detected"
       shell: bash
+    - name: 'Comment PR'
+      uses: actions/github-script@0.3.0
+      if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && steps.detect.outputs.WARN == 'true' }}
+      with:
+        github-token: ${{ inputs.github_token }}
+        script: |
+          const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
+          github.issues.createComment({
+            issue_number, 
+            owner, 
+            repo, 
+            body: 'Libraries are not up to date with their remote counterparts. ' +
+                  'If this was not intentional, run \`charmcraft fetch-libs\` and commit the updated libs to your PR branch.'
+          });
