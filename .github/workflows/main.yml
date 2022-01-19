@@ -6,12 +6,16 @@ jobs:
     name: Check charm libraries
     steps:
       - uses: actions/checkout@v2
-      - name: Install Snapcraft
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install snapd -y
           sudo snap install charmcraft --classic
+      - name: Clone charm
+        run: |
+          git clone git@github.com/canonical/observability-libs
       - name: Check libraries
-        uses: simskij/charm-lib-checker-action@HEAD
+        uses: ./.github/actions/charm-lib-checker-action
         with:
+          charm_path: ./observability-libs
           github_token: ${{ secrets.GITHUB_TOKEN }}
