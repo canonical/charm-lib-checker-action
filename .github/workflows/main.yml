@@ -14,6 +14,7 @@ jobs:
       - name: Clone charm
         run: |
           git clone https://github.com/canonical/observability-libs
+          ls -la ./.github/actions/
       - name: Check libraries
         uses: ./.github/actions/charm-lib-checker-action
         with:
