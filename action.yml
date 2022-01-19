@@ -28,3 +28,4 @@ runs:
       run: |
         export TEXT="Libraries are not up to date with their remote counterparts. If this was not intentional, run `charmcraft fetch-libs` and commit the updated libs to your PR branch."
         echo "::warning file=metadata.yaml,line=1,col=1::$TEXT"  
+      shell: bash
