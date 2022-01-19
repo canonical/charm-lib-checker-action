@@ -14,9 +14,9 @@ jobs:
       - name: Clone charm
         run: |
           ls -la .
-          git clone https://github.com/canonical/observability-libs
+          git clone https://github.com/canonical/prometheus-k8s-operator
       - name: Check libraries
         uses: "./"
         with:
-          charm_path: ./observability-libs
+          charm_path: ./prometheus-k8s-operator
           github_token: ${{ secrets.GITHUB_TOKEN }}

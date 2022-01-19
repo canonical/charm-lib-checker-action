@@ -16,20 +16,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install dependencies
+      run: |
+        sudo snap install yq
+      shell: bash
     - name: Detect drift
       run: |
         cd ${{ inputs.charm_path }}
-        export CHARM_NAME=$(yq eval '.name' metadata.yaml | sed 's/-/_/')
-        export OUTPUT=$(charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)')
-        if [ $? -ne 0 ]; then
-          exit 0;
-        else
-          exit 1;
-        fi
-      shell: bash
-    - name: Add warning
-      if: ${{ failure() }}
-      run: |
         export TEXT="Libraries are not up to date with their remote counterparts. If this was not intentional, run \`charmcraft fetch-libs\` and commit the updated libs to your PR branch."
-        echo "::warning file=metadata.yaml,line=1,col=1::$TEXT"  
+        export CHARM_NAME=$(yq eval '.name' metadata.yaml | sed 's/-/_/')
+        charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)' && echo "::warning file=metadata.yaml,line=1,col=1::$TEXT"
       shell: bash
