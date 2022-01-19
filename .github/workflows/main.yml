@@ -13,6 +13,7 @@ jobs:
           sudo snap install charmcraft --classic
       - name: Clone charm
         run: |
+          ls -la ./.github/actions/
           git clone https://github.com/canonical/observability-libs
       - name: Check libraries
         uses: ./.github/actions/charm-lib-checker-action
