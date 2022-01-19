@@ -20,12 +20,12 @@ runs:
       run: |
         charmcraft \
           -p ${{ inputs.charm_path }} \
-          fetch-lib 2>&1 | \
-          grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)"
+          fetch-lib 
+        # | \ grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)"
       shell: bash
     - name: Add warning
       if: ${{ failure() }}
       run: |
-        export TEXT="Libraries are not up to date with their remote counterparts. If this was not intentional, run `charmcraft fetch-libs` and commit the updated libs to your PR branch."
+        export TEXT="Libraries are not up to date with their remote counterparts. If this was not intentional, run \`charmcraft fetch-libs\` and commit the updated libs to your PR branch."
         echo "::warning file=metadata.yaml,line=1,col=1::$TEXT"  
       shell: bash
