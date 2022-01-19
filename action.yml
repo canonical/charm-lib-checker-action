@@ -18,10 +18,14 @@ runs:
   steps:
     - name: Detect drift
       run: |
-        charmcraft \
-          -p ${{ inputs.charm_path }} \
-          fetch-lib 
-        # | \ grep -E "(updated\sto\sversion|not found in Charmhub|has local changes)"
+        cd ${{ inputs.charm_path }}
+        export CHARM_NAME=$(yq eval '.name' metadata.yaml | sed 's/-/_/')
+        export OUTPUT=$(charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)')
+        if [ $? -ne 0 ]; then
+          exit 0;
+        else
+          exit 1;
+        fi
       shell: bash
     - name: Add warning
       if: ${{ failure() }}
