@@ -8,6 +8,10 @@ inputs:
     default: "."
     description: >
       Path to the charm to fetch libs for, if different.
+  charmhub_token:
+    required: true
+    description: >
+      CharmHub token used to fetch remote libraries through charmcraft.
   github_token:
     required: true
     description: >
@@ -25,7 +29,7 @@ runs:
       run: |
         cd ${{ inputs.charm_path }}
         export CHARM_NAME=$(yq eval '.name' metadata.yaml | sed 's/-/_/')
-        charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)' && echo "::set-output name=WARN::true" || echo "No drifts detected"
+        CHARMCRAFT_AUTH="${{ inputs.charmhub_token }}" charmcraft fetch-lib 2>&1 | sed "/$CHARM_NAME/d" | grep -E '(updated to version|not found in Charmhub|has local changes)' && echo "::set-output name=WARN::true" || echo "No drifts detected"
       shell: bash
     - name: 'Comment PR'
       uses: actions/github-script@0.3.0
