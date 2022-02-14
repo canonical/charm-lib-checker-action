@@ -19,3 +19,4 @@ jobs:
         with:
           charm_path: ./observability-libs
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          charmhub_token: ${{ secrets.CHARMHUB_TOKEN }}
